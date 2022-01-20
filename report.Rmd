@@ -1,26 +1,27 @@
 ---
-title: "HW1 Example"
+title: "Assignment 1"
+author: Dakota Hawkins
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-source("HW1.R")
+source("main.R")
 ```
 
 
-## Reading in Sample Metadata
+## 1.  Reading in Sample Metadata
 
 To begin, we first want to read in our project metadata and expression data. Using
-`tidyvers` packages, read in the sample metadata file, `proj_metadata.csv`, and
-return the head of the `tibble`.
+`tidyverse` packages, read in the sample metadata file, `proj_metadata.csv`, and
+return the head of the **first five** columns of the `tibble`.
 
 ```{r, message=FALSE}
-metadata <- readr::read_csv("proj_metadata.csv")
-head(metadata)
+metadata <- readr::read_csv("data/proj_metadata.csv")
+knitr::kable(head(metadata)[c(1:5)])
 ```
 
-## Reading in Expression Data
+## 2. Reading in Expression Data
 
 Reading the expression matrix is more complicated. In the supplied R script,
 implement the `read_expression_table` function to properly handle the format
@@ -28,11 +29,11 @@ of `example_intensity_data.csv`, including specifying the value delimiter,
 transposing the matrix so samples are rows and probes are columns, and likewise
 ensure a `tibble` object is returned.
 ```{r}
-expr_mat <- read_expression_table('example_intensity_data.csv')
-head(expr_mat)
+expr_mat <- read_expression_table('data/example_intensity_data.csv')
+knitr::kable(head(expr_mat[c(1:5)]))
 ```
 
-## Formatting Column Names 
+## 3. Formatting Column Names 
 
 The column names of the metadata file contain various delimiters, including "."
 and "_". Standardize this by implementing the function `period_to_underscore` to
@@ -45,7 +46,7 @@ colnames(metadata) <-
 colnames(metadata)
 ```
 
-## Renaming and Selecting Columns of interest
+## 4. Renaming and Selecting Columns of interest
 
 Using `dplyr` renaming and selecting to columns of interest is very straight
 forward. Implement the `rename_and_select` function to rename and select columns
@@ -69,7 +70,7 @@ selected_metadata <- stage_as_factor(selected_metadata)
 selected_metadata$Stage
 ```
 
-## Average Age by Sex
+## 5. Average Age by Sex
 
 Often times we'll want to calculate summary statistics for different groups.
 Implement the `mean_age_by_sex` function to properly filter your metadata tibble
@@ -83,7 +84,7 @@ print(paste0("The average male age is: ", round(male_age, digits=2)))
 print(paste0("The average female age is: ", round(female_age, digits=2)))
 ```
 
-## Grouping Data
+## 6. Grouping Data
 While filtering datasets by individual values is a viable method, we may often
 was to summarize our data across multiple groups. The `group_by` method from
 `dplyr` allows easy grouping of data `tibbles`, and the `summarise` function
@@ -101,7 +102,7 @@ age_by_stage(selected_metadata)
 subtype_stage_cross_tab(selected_metadata)
 ```
 
-## Selecting Interesting Features in Expression Data
+## 7. Selecting Interesting Features in Expression Data
 
 Often during analysis we will want to select interesting features or genes to
 explore more in-depth. For example, we may be interested in the most __highly__
@@ -111,7 +112,7 @@ and variability as columns (denoted "mean_exp" and "variance", respectively).
 
 ```{r}
 summarized <- summarize_expression(expr_mat)
-head(summarized)
+knitr::kable(head(summarized))
 ```
 
 Using `dplyr::top_n` and `dplyr::arrange`, report the top ten mostly highly
@@ -128,7 +129,7 @@ print(paste0("The most highly expressed probes are ", paste(highest_exp$probe, c
 print(paste0("The most variable probes are ", paste(most_variable$probe, collapse=',')))
 ```
 
-## Re-using Functions to Save Time and to Modularize Code
+## 8. Re-using Functions to Save Time and to Modularize Code
 
 If you looked into the samples present in the sample metadata, as well as the
 expression matrix, you may have realized not all samples in the expression data
