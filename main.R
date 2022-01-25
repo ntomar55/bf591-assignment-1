@@ -21,13 +21,7 @@ library(stringr)
 #'
 #' @examples expr_mat <- read_expression_table('example_intensity_data.csv')
 read_expression_table <- function(filename) {
-  expr_mat <- tibble::as_tibble(t(read.table(
-    filename,
-    header = TRUE,
-    sep = " "
-  )),
-  rownames = "subject_id")
-  return (expr_mat)
+  return (NULL)
 }
 
 
@@ -42,7 +36,7 @@ read_expression_table <- function(filename) {
 #' period_to_underscore("foo.bar")
 #' "foo_bar"
 period_to_underscore <- function(str) {
-  return (stringr::str_replace_all(str, "\\.", "_"))
+  return ("")
 }
 
 
@@ -67,23 +61,7 @@ period_to_underscore <- function(str) {
 #' 
 #' 
 rename_and_select <- function(data) {
-  out <- dplyr::rename(data,
-                       "Age" = Age_at_diagnosis, 
-                       "Subtype" = SixSubtypesClassification,
-                       "Batch" = normalizationcombatbatch) %>%
-    dplyr::select(
-      c(
-        "Sex",
-        "Age",
-        "TNM_Stage",
-        "Tumor_Location",
-        "geo_accession",
-        "KRAS_Mutation",
-        "Subtype",
-        "Batch"
-      )
-    )
-  return (out)
+  return (NULL)
 }
 
 
@@ -100,9 +78,7 @@ rename_and_select <- function(data) {
 #'
 #' @examples metadata <- stage_as_factor(metadata)
 stage_as_factor <- function(data) {
-  out <-
-    dplyr::mutate(data, Stage = as.factor(paste0("stage ", TNM_Stage)))
-  return (out)
+  return (NULL)
 }
 
 
@@ -117,9 +93,7 @@ stage_as_factor <- function(data) {
 #'
 #' @examples mean_age_by_sex(metadata, "F")
 mean_age_by_sex <- function(data, sex) {
-  out <- dplyr::filter(data, Sex == sex) %>%
-    summarize(mean(Age))
-  return (out)
+  return (NULL)
 }
 
 
@@ -134,9 +108,7 @@ mean_age_by_sex <- function(data, sex) {
 #'
 #' @examples age_by_stage(data)
 age_by_stage <- function(data) {
-  out <- dplyr::group_by(data, Stage) %>%
-    dplyr::summarise((mean(Age)))
-  return (out)
+  return (NULL)
 }
 
 #' Create a cross tabulated table for Subtype and Stage using dplyr methods.
@@ -151,14 +123,7 @@ age_by_stage <- function(data) {
 #'
 #' @examples cross_tab <- dplyr_cross_tab(metadata)
 subtype_stage_cross_tab <- function(data) {
-  out <- dplyr::group_by(data, Subtype, Stage) %>%
-    dplyr::summarise("n" = dplyr::n()) %>%
-    tidyr::pivot_wider(
-      names_from = Subtype,
-      values_from = n,
-      values_fill = 0
-    )
-  return (out)
+  return (NULL)
 }
 
 #' Summarize average expression and probe variability over expression matrix.
@@ -170,15 +135,5 @@ subtype_stage_cross_tab <- function(data) {
 #' columns documenting average expression, probe variability, and probe ids,
 #' respectively.
 summarize_expression <- function(exprs) {
-  probe_avg <-
-    apply(dplyr::select(expr_mat, !c("subject_id")), 2, mean)
-  probe_var <-
-    apply(dplyr::select(expr_mat, !c("subject_id")), 2, var)
-  
-  summarized <- tibble::tibble(
-    "mean_exp" = probe_avg,
-    "variance" = probe_var,
-    "probe" = names(probe_avg)
-  )
-  return (summarized)
+  return (NULL)
 }
