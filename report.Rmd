@@ -40,6 +40,10 @@ and "_". Standardize this by implementing the function `period_to_underscore` to
 properly replace all instances of "." with "_" in a string. Using a functional
 programming paradigm, apply this function to each column name in the metadata
 `tibble` and replace the column names.
+
+**Hint:** there are several possible solutions to this problem. Feel free to 
+Google possible ways to manipulate strings in `R`. One possible way is to use
+regular expressions and the `stringr` library. 
 ```{r}
 colnames(metadata) <-
   lapply(colnames(metadata), period_to_underscore)
@@ -50,8 +54,17 @@ colnames(metadata)
 
 Using `dplyr` renaming and selecting to columns of interest is very straight
 forward. Implement the `rename_and_select` function to rename and select columns
-as specified in the docstrings. Return the head of the newly formatted and
-subsetted `tibble`. 
+as the specified columns. Return the head of the newly formatted and subsetted
+`tibble`. 
+
+**Columns to rename**:
+
+1. "Age_at_diagnosis" to "Age"
+2. "SixSubtypesClassification" to "Subtype"
+3. "normalizationcombatbatch" to "Batch"
+
+**Columns to select**: "Sex", "Age", "TNM_Stage", "Tumor_Location",
+"geo_accession", "KRAS_Mutation", "Subtype", "Batch"
 
 ```{r}
 selected_metadata <- rename_and_select(metadata)
@@ -107,8 +120,17 @@ subtype_stage_cross_tab(selected_metadata)
 Often during analysis we will want to select interesting features or genes to
 explore more in-depth. For example, we may be interested in the most __highly__
 expressed genes, or perhaps the most __variable__ genes. Implement the function
-`summarize_expression` to create a new `tibble` with average probe expression
-and variability as columns (denoted "mean_exp" and "variance", respectively). 
+`summarize_expression()` to create a new `tibble` with average probe expression
+ (denoted "mean_exp").
+
+ **Hint:** There are several functions in base R that can be used for common
+ analysis steps. For example, `rowMeans()` or `colMeans`, can be used to 
+ calculate row or column-wise averages.
+
+ **Extra:** instead of simply returning mean probe expression, re-work
+ `summarize_expression()` to also return prove _variability_ by first calculating
+ prove-wise variability across all samples, and adding the column to the
+ returned `tibble`. Denote the column as "variance". 
 
 ```{r}
 summarized <- summarize_expression(expr_mat)
@@ -121,12 +143,14 @@ expressed probes, as well as the top ten most variable.
 ```{r}
 highest_exp <- dplyr::top_n(summarized, 10, mean_exp) %>%
   dplyr::arrange(dplyr::desc(mean_exp))
-
-most_variable <- dplyr::top_n(summarized, 10, variance) %>%
-  dplyr::arrange(dplyr::desc(variance))
-
 print(paste0("The most highly expressed probes are ", paste(highest_exp$probe, collapse=', ')))
-print(paste0("The most variable probes are ", paste(most_variable$probe, collapse=',')))
+
+if (c('variance') %in% colnames(summarized)) {
+  most_variable <- dplyr::top_n(summarized, 10, variance) %>%
+  dplyr::arrange(dplyr::desc(variance))
+  print(paste0("The most variable probes are ", paste(most_variable$probe, collapse=',')))
+}
+
 ```
 
 ## 8. Re-using Functions to Save Time and to Modularize Code
